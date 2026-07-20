@@ -66,8 +66,8 @@ function Landing({ onBegin }) {
       <div className="land-photo" aria-hidden="true"></div>
 
       <div className="land-bottom fade-up" style={{ animationDelay: ".4s" }}>
-        <button className="cta" onClick={onBegin} style={{ gap: "11px", padding: "15px 26px 16px" }}>
-          <span style={{ color: "#ffffff", letterSpacing: "1.2px", lineHeight: "1.4", margin: "0px", borderStyle: "solid", borderWidth: "0px", borderRadius: "0px", padding: "11px", textAlign: "center" }}>Սկսիր քո ճանապարհը</span>
+        <button className="cta" onClick={onBegin}>
+          <span style={{ color: "#ffffff", letterSpacing: "1.2px" }}>Սկսիր քո ճանապարհը</span>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ stroke: "rgb(255, 255, 255)" }} /></svg>
         </button>
         <div className="land-credit">
