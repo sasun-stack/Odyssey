@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="hy">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>KinoPark · Gift card confirmation</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Armenian:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+
+<style>
+  html, body { margin: 0; padding: 0; min-height: 100%; background: #1a1a1a; font-family: 'Manrope', 'Noto Sans Armenian', system-ui, sans-serif; }
+  *, *::before, *::after { box-sizing: border-box; }
+  .stage {
+    min-height: 100vh;
+    padding: 48px 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+  }
+  .stage h1 {
+    color: #fff; font-size: 22px; font-weight: 700;
+    letter-spacing: -0.01em; margin: 0;
+  }
+  .stage .subtitle {
+    color: rgba(255,255,255,0.55); font-size: 13px;
+    margin: -20px 0 0; max-width: 560px; text-align: center; line-height: 1.5;
+  }
+  .stage .row {
+    display: flex; gap: 48px; align-items: flex-start;
+    flex-wrap: wrap; justify-content: center;
+  }
+  .stage .card { display: flex; flex-direction: column; gap: 10px; align-items: center; }
+  .stage .card .label {
+    color: rgba(255,255,255,0.55); font-size: 12px; font-weight: 500;
+    letter-spacing: 0.04em; text-transform: uppercase;
+  }
+</style>
+
+<!-- React + Babel -->
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+
+<body>
+  <div id="root"></div>
+
+  <!-- Shared TicketEmail components export THEMES, BRAND, KPLogo, Icon to window -->
+  <script type="text/babel" src="ticket-email.jsx"></script>
+  <script type="text/babel" src="ios-frame.jsx"></script>
+
+  <!-- New gift card components -->
+  <script type="text/babel" src="gift-card.jsx"></script>
+  <script type="text/babel" src="gift-card-screen.jsx"></script>
+
+  <!-- Mount -->
+  <script type="text/babel">
+    // Standard preview: a mid-tier 15,000 ֏ gift card
+    const GIFT = {
+      buyer: { firstName: 'Արամ', lastName: 'Հարությունյան' },
+      recipient: { name: 'Անի Սարգսյան' },
+      price: 15000,      // what the buyer paid
+      balance: 15000,    // current balance on the card
+      code: 'KP-7F4A-9E21-B8C3',
+      validUntil: '14.06.2027',
+      orderNumber: '2081447',
+      sendUrl: '#send-to-recipient',
+      variant: 'noir',   // 'noir' | 'sunset' | 'paper'
+      message: 'Անի ջան, շնորհավորում եմ ծննդյանդ տարեդարձը։ Մաղթում եմ քեզ շատ լավ ֆիլմեր և էլ ավելի լավ ընկերներ կինոյում։ Վայելիր։',
+    };
+
+    // Light theme + paper artwork
+    const GIFT_LIGHT = {
+      ...GIFT,
+      variant: 'sunset',
+    };
+
+    // Premium tier — bigger amount, partially used
+    const GIFT_PREMIUM = {
+      ...GIFT,
+      buyer: { firstName: 'Մարիամ', lastName: 'Ավետիսյան' },
+      recipient: { name: 'Դավիթ Մարտիրոսյան' },
+      price: 50000,
+      balance: 38500,
+      code: 'KP-D2A1-4F77-9C0E',
+      validUntil: '01.12.2027',
+      orderNumber: '2099031',
+      variant: 'paper',
+      message: 'Դավիթ, քեզ համար մի փոքր տոնական անակնկալ։ Գնա IMAX-ով նայիր էն ֆիլմը, որի մասին խոսում էինք — հյուրասիրությունն իմ կողմից է։\n\nՍիրով՝',
+    };
+
+    const App = () => {
+      return (
+        <div className="stage">
+          <h1>KinoPark · Gift card confirmation</h1>
+          <p className="subtitle">
+            Two stub presentations of the same gift card — compare the code
+            treatment & layout. Everything above the perforation is identical.
+          </p>
+
+          <div className="row">
+            <div className="card">
+              <div className="label">A · Split (code left, balance right)</div>
+              <GiftCardScreen compact theme="dark" data={GIFT} stubLayout="split" />
+            </div>
+            <div className="card">
+              <div className="label">B · Banner (code full-width, segmented)</div>
+              <GiftCardScreen compact theme="dark" data={GIFT} stubLayout="banner" />
+            </div>
+          </div>
+
+          <div className="row">
+            <div className="card">
+              <div className="label">A · Split · Light</div>
+              <GiftCardScreen compact theme="light" data={GIFT_LIGHT} stubLayout="split" />
+            </div>
+            <div className="card">
+              <div className="label">B · Banner · Light</div>
+              <GiftCardScreen compact theme="light" data={GIFT_LIGHT} stubLayout="banner" />
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>

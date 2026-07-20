@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quick Actions — Tappable Variations</title>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+  :root{
+    --bg:#E9EDF2;--ink:#11161C;--orange:#F26B1F;
+    --green:#34B27B;--purple:#8B6BD9;--blue:#4C8DF5;
+  }
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;}
+
+  .frame{
+    width:390px;background:var(--bg);padding:18px 16px 22px;
+    display:flex;flex-direction:column;gap:14px;
+  }
+  .state-label{
+    font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;
+    color:#9aa3ad;padding-left:2px;
+  }
+  .quick{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+
+  .qa{
+    position:relative;background:#fff;border-radius:14px;padding:14px 6px 11px;
+    display:flex;flex-direction:column;align-items:center;gap:9px;
+    cursor:pointer;transition:transform .12s ease, box-shadow .12s ease;
+  }
+  .qa .ic{width:26px;height:26px;display:flex;align-items:center;justify-content:center;}
+  .qa .lbl{font-size:10.5px;font-weight:600;color:#2b333c;text-align:center;line-height:1.2;}
+
+  /* ============ V1 — Raised card + corner chevron ============ */
+  .v1 .qa{box-shadow:0 4px 14px rgba(30,41,59,.12);}
+  .v1 .qa:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(30,41,59,.18);}
+  .v1 .qa.press{transform:translateY(1px) scale(.97);box-shadow:0 2px 6px rgba(30,41,59,.14);}
+  .v1 .qa .chev{
+    position:absolute;top:8px;right:8px;color:#c2cad3;
+  }
+
+  /* ============ V2 — Tinted tile + solid icon chip ============ */
+  .v2 .qa{box-shadow:0 2px 8px rgba(30,41,59,.05);}
+  .v2 .qa .ic{
+    width:38px;height:38px;border-radius:11px;color:#fff;
+  }
+  .v2 .qa .ic svg{stroke:#fff !important;}
+  .v2 .c-green{background:var(--green);}  .v2 .c-purple{background:var(--purple);}
+  .v2 .c-blue{background:var(--blue);}    .v2 .c-orange{background:var(--orange);}
+  .v2 .t-green{background:#eaf7f1;} .v2 .t-purple{background:#f1edfb;}
+  .v2 .t-blue{background:#eaf2fe;}  .v2 .t-orange{background:#fdeee4;}
+  .v2 .qa:hover{transform:translateY(-2px);}
+  .v2 .qa.press{transform:scale(.96);filter:brightness(.97);}
+
+  /* ============ V3 — Outlined CTA + chevron ============ */
+  .v3 .qa{border:1.5px solid #e3e7ec;box-shadow:none;padding-bottom:9px;}
+  .v3 .qa .foot{
+    display:flex;align-items:center;justify-content:center;gap:3px;
+    margin-top:1px;font-size:9px;font-weight:700;color:var(--orange);
+  }
+  .v3 .qa:hover{border-color:var(--orange);background:#fffaf6;}
+  .v3 .qa.press{transform:scale(.97);background:#fff3ea;border-color:var(--orange);}
+
+  /* ============ V4 — Accent footer bar (button) ============ */
+  .v4 .qa{padding:14px 6px 0;overflow:hidden;box-shadow:0 3px 12px rgba(30,41,59,.07);}
+  .v4 .qa .bar{
+    margin-top:11px;width:100%;height:22px;
+    display:flex;align-items:center;justify-content:center;gap:4px;
+    font-size:9px;font-weight:800;letter-spacing:.3px;color:#fff;
+    background:var(--orange);
+  }
+  .v4 .qa:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(242,107,31,.22);}
+  .v4 .qa.press .bar{filter:brightness(.9);}
+  .v4 .qa.press{transform:scale(.98);}
+
+  /* ============ V5 — Solid filled buttons ============ */
+  .v5 .qa{box-shadow:0 6px 16px rgba(242,107,31,.28);}
+  .v5 .qa.g-green{background:var(--green);box-shadow:0 6px 16px rgba(52,178,123,.3);}
+  .v5 .qa.g-purple{background:var(--purple);box-shadow:0 6px 16px rgba(139,107,217,.3);}
+  .v5 .qa.g-blue{background:var(--blue);box-shadow:0 6px 16px rgba(76,141,245,.3);}
+  .v5 .qa.g-orange{background:var(--orange);box-shadow:0 6px 16px rgba(242,107,31,.3);}
+  .v5 .qa .lbl{color:#fff;}
+  .v5 .qa .ic svg{stroke:#fff !important;}
+  .v5 .qa:hover{transform:translateY(-2px);}
+  .v5 .qa.press{transform:translateY(2px) scale(.97);filter:brightness(.94);}
+
+  /* ============ V6 — Icon badge + corner arrow button ============ */
+  .v6 .qa{box-shadow:0 2px 8px rgba(30,41,59,.06);padding-top:16px;}
+  .v6 .qa .ic{width:36px;height:36px;border-radius:50%;}
+  .v6 .g .ic{background:#eaf7f1;} /* fallback */
+  .v6 .qa.b-green .ic{background:#eaf7f1;} .v6 .qa.b-purple .ic{background:#f1edfb;}
+  .v6 .qa.b-blue .ic{background:#eaf2fe;}  .v6 .qa.b-orange .ic{background:#fdeee4;}
+  .v6 .qa .arrow{
+    position:absolute;right:8px;bottom:8px;width:18px;height:18px;border-radius:50%;
+    background:var(--orange);display:flex;align-items:center;justify-content:center;
+    box-shadow:0 2px 5px rgba(242,107,31,.4);
+  }
+  .v6 .qa:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(30,41,59,.16);}
+  .v6 .qa.press{transform:scale(.97);}
+  .v6 .qa.press .arrow{filter:brightness(.9);}
+
+  /* ============ V7 — Colored top accent strip ============ */
+  .v7 .qa{box-shadow:0 3px 10px rgba(30,41,59,.07);padding-top:16px;border-top:none;}
+  .v7 .qa::before{
+    content:"";position:absolute;top:0;left:0;right:0;height:4px;border-radius:14px 14px 0 0;
+  }
+  .v7 .qa.s-green::before{background:var(--green);} .v7 .qa.s-purple::before{background:var(--purple);}
+  .v7 .qa.s-blue::before{background:var(--blue);}   .v7 .qa.s-orange::before{background:var(--orange);}
+  .v7 .qa .chev{position:absolute;top:9px;right:8px;color:#c2cad3;}
+  .v7 .qa:hover{transform:translateY(-2px);box-shadow:0 9px 22px rgba(30,41,59,.16);}
+  .v7 .qa.press{transform:scale(.97);}
+
+  /* ============ V8 — Soft pressable (physical button) ============ */
+  .v8 .qa{
+    background:#fff;
+    box-shadow:0 1px 0 #ffffff inset, 0 6px 0 #d7dde4, 0 8px 14px rgba(30,41,59,.16);
+    margin-bottom:4px;transition:transform .08s ease, box-shadow .08s ease;
+  }
+  .v8 .qa:hover{box-shadow:0 1px 0 #fff inset, 0 6px 0 #d2d9e1, 0 10px 18px rgba(30,41,59,.2);}
+  .v8 .qa.press{transform:translateY(5px);box-shadow:0 1px 0 #fff inset, 0 1px 0 #d7dde4, 0 2px 5px rgba(30,41,59,.18);}
+
+  /* ============ V9 — Gradient fill + arrow chip ============ */
+  .v9 .qa .lbl{color:#fff;}
+  .v9 .qa .ic svg{stroke:#fff !important;}
+  .v9 .qa.gr-green{background:linear-gradient(155deg,#3fc98c,#2a9468);box-shadow:0 6px 16px rgba(52,178,123,.32);}
+  .v9 .qa.gr-purple{background:linear-gradient(155deg,#9b7ce8,#7355c4);box-shadow:0 6px 16px rgba(139,107,217,.32);}
+  .v9 .qa.gr-blue{background:linear-gradient(155deg,#5e9bff,#3c74da);box-shadow:0 6px 16px rgba(76,141,245,.32);}
+  .v9 .qa.gr-orange{background:linear-gradient(155deg,#fb8242,#e15b14);box-shadow:0 6px 16px rgba(242,107,31,.32);}
+  .v9 .qa .arrow{
+    position:absolute;top:8px;right:8px;width:18px;height:18px;border-radius:50%;
+    background:rgba(255,255,255,.28);display:flex;align-items:center;justify-content:center;
+  }
+  .v9 .qa:hover{transform:translateY(-2px);}
+  .v9 .qa.press{transform:translateY(2px) scale(.97);filter:brightness(.94);}
+
+  /* ===== shared tints for Round 3 redesigns ===== */
+  .bg-green{background:#eaf7f1;} .bg-purple{background:#f1edfb;}
+  .bg-blue{background:#eaf2fe;}  .bg-orange{background:#fdeee4;}
+
+  /* ============ C1 — Horizontal list rows ============ */
+  .c3-list{display:flex;flex-direction:column;gap:10px;}
+  .c3-row{
+    display:flex;align-items:center;gap:13px;background:#fff;border-radius:14px;
+    padding:12px 14px;box-shadow:0 2px 8px rgba(30,41,59,.06);cursor:pointer;
+    transition:transform .12s ease, box-shadow .12s ease, background .12s ease;
+  }
+  .c3-row .c3-ic{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex:0 0 auto;}
+  .c3-row .c3-txt{flex:1;font-size:15px;font-weight:600;color:#1b2630;}
+  .c3-row:hover{box-shadow:0 7px 18px rgba(30,41,59,.14);transform:translateY(-1px);}
+  .c3-row.press{background:#f5f7f9;transform:scale(.99);box-shadow:0 2px 6px rgba(30,41,59,.1);}
+
+  /* ============ C2 — Big 2×2 button tiles ============ */
+  .c3-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .c3-big{
+    position:relative;background:#fff;border-radius:18px;padding:15px 15px 14px;
+    box-shadow:0 4px 14px rgba(30,41,59,.1);cursor:pointer;
+    display:flex;flex-direction:column;gap:16px;min-height:106px;
+    transition:transform .12s ease, box-shadow .12s ease;
+  }
+  .c3-big .c3-ic{width:44px;height:44px;border-radius:13px;display:flex;align-items:center;justify-content:center;}
+  .c3-big .c3-foot{display:flex;align-items:flex-end;justify-content:space-between;}
+  .c3-big .c3-lbl{font-size:15px;font-weight:700;color:#1b2630;line-height:1.12;}
+  .c3-big .arrow{width:24px;height:24px;border-radius:50%;background:var(--orange);display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(242,107,31,.4);flex:0 0 auto;}
+  .c3-big:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(30,41,59,.16);}
+  .c3-big.press{transform:scale(.98);box-shadow:0 3px 8px rgba(30,41,59,.12);}
+
+  /* ============ C3 — Pill chips ============ */
+  .c3-pills{display:flex;flex-wrap:wrap;gap:10px;}
+  .c3-pill{
+    display:inline-flex;align-items:center;gap:9px;background:#fff;
+    border:1.5px solid #e3e7ec;border-radius:999px;padding:8px 15px 8px 8px;
+    font-size:13.5px;font-weight:600;color:#1b2630;cursor:pointer;
+    box-shadow:0 2px 6px rgba(30,41,59,.05);transition:all .12s ease;
+  }
+  .c3-pill .c3-ic{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex:0 0 auto;}
+  .c3-pill .c3-ic svg{width:18px;height:18px;}
+  .c3-pill:hover{border-color:var(--orange);background:#fffaf6;box-shadow:0 5px 12px rgba(242,107,31,.14);}
+  .c3-pill.press{transform:scale(.96);background:#fff3ea;border-color:var(--orange);}
+
+  /* ============ C4 — Connected segmented bar ============ */
+  .c3-seg{display:flex;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 14px rgba(30,41,59,.1);}
+  .c3-seg-item{
+    flex:1;display:flex;flex-direction:column;align-items:center;gap:9px;
+    padding:15px 6px;cursor:pointer;position:relative;
+    transition:background .12s ease, transform .1s ease;
+  }
+  .c3-seg-item + .c3-seg-item{border-left:1px solid #eef1f4;}
+  .c3-seg-item .c3-lbl{font-size:10.5px;font-weight:600;color:#2b333c;text-align:center;line-height:1.2;}
+  .c3-seg-item::after{content:"";position:absolute;left:18px;right:18px;bottom:7px;height:2px;border-radius:2px;background:transparent;}
+  .c3-seg-item:hover{background:#f7f9fb;}
+  .c3-seg-item:hover::after{background:var(--orange);}
+  .c3-seg-item.press{background:#eef2f6;transform:scale(.97);}
+  .c3-seg-item.press::after{background:var(--orange);}
+
+  .note{
+    font-size:11px;color:#7a828c;line-height:1.5;max-width:360px;padding:2px;
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel">
+const {useState} = React;
+
+/* ---- icons (identical content across all variants) ---- */
+const IcCash = () => <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#34B27B" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v4h-4"/><path d="M12 7v5l3 2"/></svg>;
+const IcGift = () => <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#8B6BD9" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M3 12h18"/><path d="M12 8V5"/><path d="M12 5c-1.5-2-4.5-1.5-4 1 1.5 1.5 4 0 4-1zM12 5c1.5-2 4.5-1.5 4 1-1.5 1.5-4 0-4-1z"/></svg>;
+const IcGear = () => <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#4C8DF5" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-2.7 1.1V21a2 2 0 1 1-4 0v-.1A1.6 1.6 0 0 0 7 19.4a1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.6 1.6 0 0 0 2.6 14H2a2 2 0 1 1 0-4h.1A1.6 1.6 0 0 0 4 9a1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1A1.6 1.6 0 0 0 9 4.6V4a2 2 0 1 1 4 0v.1A1.6 1.6 0 0 0 17 4a1.6 1.6 0 0 0 1.8.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1A1.6 1.6 0 0 0 21.4 9z"/></svg>;
+const IcTicket = () => <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#F26B1F" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M4 5h16a1 1 0 0 1 1 1v3a2 2 0 0 0 0 4v3a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-3a2 2 0 0 0 0-4V6a1 1 0 0 1 1-1z"/><path d="M10 5v14" strokeDasharray="2 2"/></svg>;
+
+const Chev = ({c="#c2cad3"}) => <svg className="chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="M9 6l6 6-6 6"/></svg>;
+
+const TILES = [
+  {key:"green",  color:"#34B27B", Icon:IcCash,   label:["Get","Cashback"]},
+  {key:"purple", color:"#8B6BD9", Icon:IcGift,   label:["Buy","Gift Card"]},
+  {key:"blue",   color:"#4C8DF5", Icon:IcGear,   label:["Recharge","Kid Card"]},
+  {key:"orange", color:"#F26B1F", Icon:IcTicket, label:["Movie","timeline"]},
+];
+
+/* ---- variant renderers ---- */
+function Tile({t, variant, pressed}){
+  const Icon = t.Icon;
+  const cls = "qa" + (pressed ? " press" : "") + (variant==="v5" ? " g-"+t.key : "");
+  if(variant==="v1"){
+    return <div className={cls}><Chev/><div className="ic"><Icon/></div><div className="lbl">{t.label[0]}<br/>{t.label[1]}</div></div>;
+  }
+  if(variant==="v2"){
+    return <div className={cls+" t-"+t.key}><div className={"ic c-"+t.key}><Icon/></div><div className="lbl">{t.label[0]}<br/>{t.label[1]}</div></div>;
+  }
+  if(variant==="v3"){
+    return <div className={cls}><div className="ic"><Icon/></div><div className="lbl">{t.label[0]}<br/>{t.label[1]}</div><div className="foot">Tap <Chev c="#F26B1F"/></div></div>;
+  }
+  if(variant==="v4"){
+    return <div className={cls}><div className="ic"><Icon/></div><div className="lbl">{t.label[0]}<br/>{t.label[1]}</div><div className="bar">OPEN <Chev c="#fff"/></div></div>;
+  }
+  if(variant==="v6"){
+    return <div className={cls+" b-"+t.key}><div className="ic"><Icon/></div><div className="lbl">{t.label[0]}<br/>{t.label[1]}</div><div className="arrow"><Chev c="#fff"/></div></div>;
+  }
+  if(variant==="v7"){
+    return <div className={cls+" s-"+t.key}><Chev/><div className="ic"><Icon/></div><div className="lbl">{t.label[0]}<br/>{t.label[1]}</div></div>;
+  }
+  if(variant==="v8"){
+    return <div className={cls}><div className="ic"><Icon/></div><div className="lbl">{t.label[0]}<br/>{t.label[1]}</div></div>;
+  }
+  if(variant==="v9"){
+    return <div className={cls+" gr-"+t.key}><div className="arrow"><Chev c="#fff"/></div><div className="ic"><Icon/></div><div className="lbl">{t.label[0]}<br/>{t.label[1]}</div></div>;
+  }
+  // v5
+  return <div className={cls}><div className="ic"><Icon/></div><div className="lbl">{t.label[0]}<br/>{t.label[1]}</div></div>;
+}
+
+function Row({variant, pressIndex=-1}){
+  return <div className={"quick "+variant}>
+    {TILES.map((t,i)=><Tile key={t.key} t={t} variant={variant} pressed={i===pressIndex}/>)}
+  </div>;
+}
+
+function Variant({variant, note}){
+  return <div className="frame">
+    <div className="state-label">Resting</div>
+    <Row variant={variant}/>
+    <div className="state-label">Pressed · hover any tile</div>
+    <Row variant={variant} pressIndex={0}/>
+    <div className="note">{note}</div>
+  </div>;
+}
+
+const {DesignCanvas, DCSection, DCArtboard} = window;
+
+/* ===== Round 3: full structural redesigns ===== */
+function ConceptFrame({note, children}){
+  return <div className="frame"><div className="state-label">Hover / tap any item</div>{children}<div className="note">{note}</div></div>;
+}
+
+function ListConcept({note}){
+  return <ConceptFrame note={note}>
+    <div className="c3-list">
+      {TILES.map(t=>{const Icon=t.Icon;return (
+        <div className="c3-row" key={t.key}>
+          <span className={"c3-ic bg-"+t.key}><Icon/></span>
+          <span className="c3-txt">{t.label[0]} {t.label[1]}</span>
+          <Chev/>
+        </div>);})}
+    </div>
+  </ConceptFrame>;
+}
+
+function BigGridConcept({note}){
+  return <ConceptFrame note={note}>
+    <div className="c3-grid">
+      {TILES.map(t=>{const Icon=t.Icon;return (
+        <div className="c3-big" key={t.key}>
+          <span className={"c3-ic bg-"+t.key}><Icon/></span>
+          <div className="c3-foot">
+            <span className="c3-lbl">{t.label[0]}<br/>{t.label[1]}</span>
+            <span className="arrow"><Chev c="#fff"/></span>
+          </div>
+        </div>);})}
+    </div>
+  </ConceptFrame>;
+}
+
+function PillConcept({note}){
+  return <ConceptFrame note={note}>
+    <div className="c3-pills">
+      {TILES.map(t=>{const Icon=t.Icon;return (
+        <div className="c3-pill" key={t.key}>
+          <span className={"c3-ic bg-"+t.key}><Icon/></span>
+          {t.label[0]} {t.label[1]}
+        </div>);})}
+    </div>
+  </ConceptFrame>;
+}
+
+function SegConcept({note}){
+  return <ConceptFrame note={note}>
+    <div className="c3-seg">
+      {TILES.map(t=>{const Icon=t.Icon;return (
+        <div className="c3-seg-item" key={t.key}>
+          <div className="ic"><Icon/></div>
+          <div className="c3-lbl">{t.label[0]}<br/>{t.label[1]}</div>
+        </div>);})}
+    </div>
+  </ConceptFrame>;
+}
+
+
+function App(){
+  return (
+    <DesignCanvas>
+      <DCSection id="cta" title="Quick actions — make them clearly tappable" subtitle="Same icons & labels, 5 interactivity treatments. Hover tiles to feel the press state.">
+        <DCArtboard id="v1" label="1 · Raised card + chevron" width={390} height={340}>
+          <Variant variant="v1" note="Stronger drop shadow lifts each tile off the page; a small ⌃ chevron in the corner signals 'go'. Hover lifts further, tap presses down." />
+        </DCArtboard>
+        <DCArtboard id="v2" label="2 · Tinted tile + solid icon chip" width={390} height={340}>
+          <Variant variant="v2" note="Soft color-matched tint plus a filled icon chip reads as an action surface, not a static glyph. Each tile owns its brand color." />
+        </DCArtboard>
+        <DCArtboard id="v3" label="3 · Outlined + 'Tap' affordance" width={390} height={340}>
+          <Variant variant="v3" note="A crisp border defines a hit area; an explicit 'Tap ›' microlabel removes all ambiguity. Hover tints the outline KP-orange." />
+        </DCArtboard>
+        <DCArtboard id="v4" label="4 · Accent footer button bar" width={390} height={340}>
+          <Variant variant="v4" note="A solid orange action bar across the bottom turns each card into an unmistakable button while keeping the icon + label intact." />
+        </DCArtboard>
+        <DCArtboard id="v5" label="5 · Solid filled buttons" width={390} height={340}>
+          <Variant variant="v5" note="The boldest option: fully filled, color-coded buttons with white icons. Maximum 'press me' signal — best if these are the primary actions." />
+        </DCArtboard>
+      </DCSection>
+      <DCSection id="cta2" title="Round 2 — four more directions" subtitle="Fresh takes distinct from the first five. Same icons & labels; hover to feel the press.">
+        <DCArtboard id="v6" label="6 · Icon badge + corner arrow button" width={390} height={340}>
+          <Variant variant="v6" note="Each card keeps a clean white surface but pins a small orange arrow button in the corner — the universal 'this opens something' cue, like a FAB on every tile." />
+        </DCArtboard>
+        <DCArtboard id="v7" label="7 · Colored top accent strip" width={390} height={340}>
+          <Variant variant="v7" note="A 4px brand-colored strip caps each card and a faint chevron sits top-right — framed like a button while staying light and tidy." />
+        </DCArtboard>
+        <DCArtboard id="v8" label="8 · Soft pressable (physical button)" width={390} height={340}>
+          <Variant variant="v8" note="A stacked bottom shadow makes each card look raised and physically depressible; tapping pushes it down onto its shadow. Strongest tactile 'button' read with no extra chrome." />
+        </DCArtboard>
+        <DCArtboard id="v9" label="9 · Gradient fill + arrow chip" width={390} height={340}>
+          <Variant variant="v9" note="Color-coded gradient fills with a translucent arrow chip — vivid and obviously interactive, a softer cousin of the solid buttons." />
+        </DCArtboard>
+      </DCSection>
+      <DCSection id="cta3" title="Round 3 — rethink the structure" subtitle="Full redesigns, not just shadows. Same four actions & labels; the layout itself signals 'tap me'.">
+        <DCArtboard id="c1" label="A · Horizontal list rows" width={390} height={450}>
+          <ListConcept note="Full-width rows with a colored icon chip and a trailing chevron — the most universally understood 'tap to open' pattern. Easiest to scan and the largest hit area." />
+        </DCArtboard>
+        <DCArtboard id="c2" label="B · Big 2×2 button tiles" width={390} height={420}>
+          <BigGridConcept note="Generous two-up tiles with a left-aligned label and a corner arrow button. Reads as four deliberate buttons rather than a dense icon strip." />
+        </DCArtboard>
+        <DCArtboard id="c3" label="C · Pill chips" width={390} height={230}>
+          <PillConcept note="Rounded chips with an inline icon — light, compact, and unmistakably interactive. Can scroll horizontally if more actions are added." />
+        </DCArtboard>
+        <DCArtboard id="c4" label="D · Connected segmented bar" width={390} height={250}>
+          <SegConcept note="One unified control split into four tappable segments with dividers and an underline indicator on press — compact, modern, and clearly a single interactive bar." />
+        </DCArtboard>
+      </DCSection>
+    </DesignCanvas>
+  );
+}
+
+/* hover→press feedback so the canvas feels live */
+const TAP_SEL = ".qa, .c3-row, .c3-big, .c3-pill, .c3-seg-item";
+document.addEventListener("mouseover", e=>{
+  const qa = e.target.closest(TAP_SEL);
+  if(qa) qa.classList.add("press");
+});
+document.addEventListener("mouseout", e=>{
+  const qa = e.target.closest(TAP_SEL);
+  if(qa && !qa.dataset.lockPress) qa.classList.remove("press");
+});
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>

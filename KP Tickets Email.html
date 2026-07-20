@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="hy">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>KinoPark · Ticket email</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Armenian:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+<style>
+  html, body { margin: 0; padding: 0; min-height: 100%; background: #1a1a1a; font-family: 'Manrope', 'Noto Sans Armenian', system-ui, sans-serif; }
+  *, *::before, *::after { box-sizing: border-box; }
+  .stage {
+    min-height: 100vh;
+    padding: 48px 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+  }
+  .stage h1 {
+    color: #fff; font-size: 22px; font-weight: 700;
+    letter-spacing: -0.01em; margin: 0;
+  }
+  .stage .row {
+    display: flex; gap: 48px; align-items: flex-start;
+    flex-wrap: wrap; justify-content: center;
+  }
+  .stage .card { display: flex; flex-direction: column; gap: 10px; align-items: center; }
+  .stage .card .label {
+    color: rgba(255,255,255,0.55); font-size: 12px; font-weight: 500;
+    letter-spacing: 0.04em; text-transform: uppercase;
+  }
+</style>
+
+<!-- React + Babel -->
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<!-- QR is rendered as <img> via api.qrserver.com — same pattern the real email will use -->
+</head>
+
+<body>
+  <div id="root"></div>
+
+  <!-- Components -->
+  <script type="text/babel" src="design-canvas.jsx"></script>
+  <script type="text/babel" src="ticket-email.jsx"></script>
+  <script type="text/babel" src="ticket-stub.jsx"></script>
+  <script type="text/babel" src="ios-frame.jsx"></script>
+  <script type="text/babel" src="mail-screen.jsx"></script>
+
+  <!-- Mount -->
+  <script type="text/babel">
+    const TICKET = {
+      firstName: null, // could be 'Արամ' — keep null for generic salutation
+      movieTitle: 'Կրկին Փորձիր',
+      genre: 'կատակերգական',
+      meta: ['12+', 'ՌՈՒ+', '2D'],
+      date: 'Հուն 8',
+      duration: '1ժ 30ր',
+      hall: 'Սրահ 4',
+      time: '00:20',
+      seats: [
+        { row: 3, seat: 1 },
+        { row: 3, seat: 2 },
+      ],
+      orderNumber: '2075181',
+      qrPayload: 'KP-TICKET-2075181-R3-S1-S2',
+      calendarUrl: '#add-to-calendar',
+      posterUrl: null, // null → designed placeholder (swap to real URL in prod)
+      concession: [
+        { qty: 2, name: 'Popcorn M' },
+        { qty: 2, name: 'Coca-Cola 0.5L' },
+      ],
+    };
+
+    // Variant: family booking with mixed rows
+    const TICKET_FAMILY = {
+      ...TICKET,
+      movieTitle: 'Toy Story 5',
+      genre: 'անիմացիա · ընտանեկան',
+      meta: ['Ը+', 'ՀԱՅ', '2D'],
+      date: 'Հուն 12',
+      duration: '1ժ 40ր',
+      hall: 'Սրահ 2',
+      time: '14:30',
+      seats: [
+        { row: 5, seat: 7 },
+        { row: 5, seat: 8 },
+        { row: 5, seat: 9 },
+        { row: 5, seat: 10 },
+      ],
+      orderNumber: '2078234',
+      qrPayload: 'KP-TICKET-2078234-R5-S7-S8-S9-S10',
+      concession: [
+        { qty: 1, name: 'Popcorn XL Sweet' },
+        { qty: 4, name: 'Apple Juice 0.3L' },
+        { qty: 2, name: 'Nachos + Cheese' },
+      ],
+    };
+
+    // Worst-case data: many seats across rows, lots of concession items
+    const TICKET_BIG = {
+      ...TICKET,
+      firstName: 'Արամ',
+      movieTitle: 'Dune: Part Three',
+      genre: 'ֆանտաստիկ · դրամա',
+      meta: ['16+', 'ՌՈՒ+', 'IMAX'],
+      date: 'Հուն 14',
+      duration: '2ժ 45ր',
+      hall: 'IMAX',
+      time: '20:00',
+      seats: [
+        { row: 8, seat: 5 },
+        { row: 8, seat: 6 },
+        { row: 8, seat: 7 },
+        { row: 9, seat: 5 },
+        { row: 9, seat: 6 },
+      ],
+      orderNumber: '2099812',
+      qrPayload: 'KP-TICKET-2099812-MULTI',
+      concession: [
+        { qty: 2, name: 'Popcorn XL Salty' },
+        { qty: 1, name: 'Popcorn XL Caramel' },
+        { qty: 3, name: 'Coca-Cola 0.5L' },
+        { qty: 2, name: 'Pepsi 0.5L' },
+        { qty: 1, name: 'Nachos + Cheese' },
+        { qty: 2, name: 'Hot Dog Classic' },
+      ],
+    };
+
+    const App = () => {
+      return (
+        <div className="stage">
+          <h1>KinoPark · Ticket email — Mobile (compact)</h1>
+          <div className="row">
+            <div className="card">
+              <div className="label">Dark</div>
+              <MailScreen compact theme="dark" data={TICKET} />
+            </div>
+            <div className="card">
+              <div className="label">Light</div>
+              <MailScreen compact theme="light" data={TICKET} />
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
