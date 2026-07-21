@@ -187,8 +187,10 @@
     border:1px solid var(--line);border-radius:50%;transition:all .2s;
   }
   .option .opt-label{flex:1;}
+  @media (hover:hover){
   .option:hover{border-color:rgba(242,107,31,.5);background:rgba(242,107,31,.06);transform:translateX(3px);}
   .option:hover .opt-mark{border-color:var(--orange);background:rgba(242,107,31,.12);}
+  }
   .option.picked{
     border-color:var(--orange);background:rgba(242,107,31,.14);
     box-shadow:0 0 0 1px var(--orange), 0 8px 30px rgba(242,107,31,.3);
