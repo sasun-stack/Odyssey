@@ -68,7 +68,6 @@ function Landing({ onBegin }) {
       <div className="land-bottom fade-up" style={{ animationDelay: ".4s" }}>
         <button className="cta" onClick={onBegin}>
           <span style={{ color: "#ffffff", letterSpacing: "1.2px" }}>Սկսիր քո ճանապարհը</span>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ stroke: "rgb(255, 255, 255)" }} /></svg>
         </button>
         <div className="land-credit">
           <KPLogo height={16} />
